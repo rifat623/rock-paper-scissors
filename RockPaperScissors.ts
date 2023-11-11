@@ -36,30 +36,53 @@ const playRound = (
   }
 };
 
-const game = (): string => {
+const game = (): void => {
   let playerScore = 0;
   let computerScore = 0;
-  for (let i = 0; i < 5; i++) {
-    let playerSelection = prompt("Please enter your rock paper or scissors:");
-    let computerSelection = getComputerChoice();
-    if (playRound(playerSelection, computerSelection) === 0) continue;
-    if (playRound(playerSelection, computerSelection) === 1) {
-      playerScore++;
-      continue;
-    } else if (playRound(playerSelection, computerSelection) === -1) {
-      computerScore++;
-    }
-  }
-  if (playerScore === computerScore) {
-    return `Draw!`;
-  } else if (playerScore > computerScore) {
-    return `You win! Player Score: ${playerScore} vs. Computer Score ${computerScore}`;
-  } else {
-    return `You lose! Player Score: ${playerScore} vs. Computer Score ${computerScore}`;
-  }
+  let roundCount = 0;
+  const rock = document.querySelector("#rock");
+  const paper = document.querySelector("#paper");
+  const scissors = document.querySelector("#scissors");
+
+  const buttons = document.querySelectorAll("button");
+
+  const updateScores = () => {
+    // Update the score display in the DOM (assumes these elements exist)
+    document.getElementById("player-score").textContent =
+      playerScore.toString();
+    document.getElementById("computer-score").textContent =
+      computerScore.toString();
+  };
+
+  buttons.forEach((button) => {
+    // and for each one we add a 'click' listener
+    button.addEventListener("click", () => {
+      if (roundCount < 5) {
+        const playerSelection = button.id;
+        const computerSelection = getComputerChoice();
+
+        const result = playRound(playerSelection, computerSelection);
+        if (result === 1) {
+          playerScore++;
+        } else if (result === -1) {
+          computerScore++;
+        }
+      }
+
+      roundCount++;
+      updateScores();
+
+      if (roundCount === 5) {
+        if (playerScore > computerScore) {
+          alert("Game over. You won!");
+        } else if (playerScore < computerScore) {
+          alert("Game over. The computer won!");
+        } else {
+          alert("Game over. It is a tie!");
+        }
+      }
+    });
+  });
 };
 
-// const playerSelection = "rock";
-// const computerSelection = getComputerChoice();
-// console.log(playRound(playerSelection, computerSelection));
-console.log(game());
+game();
